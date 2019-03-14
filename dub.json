@@ -1,0 +1,12 @@
+{
+	"authors": [
+		"Marco"
+	],
+	"copyright": "Copyright © 2019, Marco",
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "typestate",
+	"dependencies": {
+		"openmethods": "~>1.1.1"
+	}
+}
