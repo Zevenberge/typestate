@@ -3,81 +3,85 @@ module typestate.state;
 import std.stdio;
 import std.traits : ReturnType;
 import std.conv : to;
-alias StdFile = std.stdio.File;
 
-interface File
+abstract class File
 {
+    alias StdFile = std.stdio.File;
     static File newFile(string filename)
     {
-        return new InitFile(filename);
-    }
-}
-
-class InitFile : File
-{
-    private this(string filename)
-    {
-        _filename = filename;
+        return new File.Init(filename);
     }
 
-    private string _filename;
-
-    File open()
+    static class Init : File
     {
-        return new OpenFile(new StdFile(_filename, "r"));
-    }
-}
-
-class OpenFile : File
-{
-    private this(StdFile* file)
-    {
-        _file = file;
-        _lines = _file.byLine;
-    }
-
-    alias Iterator = StdFile.ByLineImpl!(char, char);
-    private StdFile* _file;
-    private Iterator _lines;
-
-    File readLine(out string buffer)
-    {
-        buffer = _lines.front.to!string;
-        _lines.popFront;
-        if(_lines.empty)
+        private this(string name)
         {
-            return new ReadFile(_file);
+            _name = name;
         }
-        else
+
+        private string _name;
+
+        File open()
         {
-            return this;
-        }    
+            return new File.Open(new StdFile(_name, "r"));
+
+        }
     }
 
-    File close()
+    static class Open : File
     {
-        _file.close;
-        return new ClosedFile();
+        private this(StdFile* file)
+        {
+            _file = file;
+            _lines = _file.byLine;
+        }
+
+        alias Iterator = StdFile.ByLineImpl!(char, char);
+        private StdFile* _file;
+        private Iterator _lines;
+
+        File readLine(out string buffer)
+        {
+            buffer = _lines.front.to!string;
+            _lines.popFront;
+            if (_lines.empty)
+            {
+                return new File.Read(_file);
+            }
+            else
+            {
+                return this;
+            }
+        }
+
+        File close()
+        {
+            _file.close;
+            return new File.Closed();
+        }
+    }
+
+    static class Read : File
+    {
+        private this(StdFile* file)
+        {
+            _file = file;
+        }
+
+        private StdFile* _file;
+
+        File close()
+        {
+            _file.close;
+            return new File.Closed();
+        }
+    }
+
+    static class Closed : File
+    {
+        private this()
+        {
+        }
     }
 }
 
-class ReadFile : File
-{
-    private this(StdFile* file)
-    {
-        _file = file;
-    }
-
-    private StdFile* _file;
-
-    File close()
-    {
-        _file.close;
-        return new ClosedFile();
-    }
-}
-
-class ClosedFile : File
-{
-    private this(){};
-}

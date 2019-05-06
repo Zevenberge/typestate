@@ -19,13 +19,13 @@ private:
 File handle(virtual!File file);
 
 @method
-File _handle(InitFile file)
+File _handle(File.Init file)
 {
     return file.open;
 }
 
 @method
-File _handle(OpenFile file)
+File _handle(File.Open file)
 {
     string line;
     auto state = file.readLine(line);
@@ -34,13 +34,13 @@ File _handle(OpenFile file)
 }
 
 @method
-File _handle(ReadFile file)
+File _handle(File.Read file)
 {
     return file.close;
 }
 
 @method
-File _handle(ClosedFile file)
+File _handle(File.Closed file)
 {
     return file;
 }
@@ -54,7 +54,7 @@ bool _isHandled(File file)
 }
 
 @method
-bool _isHandled(ClosedFile file)
+bool _isHandled(File.Closed file)
 {
     return true;
 }

@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/typestate
+typestate.so
+typestate.dylib
+typestate.dll
+typestate.a
+typestate.lib
+typestate-test-*
+*.exe
+*.o
+*.obj
+*.lst
